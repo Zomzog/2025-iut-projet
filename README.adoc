@@ -1,0 +1,441 @@
+== Rendu
+
+Le projet doit être rendu sous la forme d'un repository (gitlab ou github)
+
+Le projet est à faire maximum en trinôme.
+
+Vous pouvez ajouter un README si vous avez un choix à justifier ou un blocage.
+
+Il doit être rendu au plus tard le 25 janvier à 23h59
+
+== Sujet
+
+Le but de ce projet est de créer 3 services pour faire de la gestion de stock magasin.
+
+Les trois services sont les suivants :
+
+- Products : un référentiel de produit.
+- Stores : un référentiel de magasin avec les produits en stock.
+- Gateway : un service qui permet de faire proxy devant les deux autres pour gérer la partie sécurité.
+
+Chaque service a sa propre spécification, des contraintes sont à respecter pour chaque service. +
+Elles ne sont pas impératives,
+par exemple s'il est demandé une base de donnée h2, il vaut mieux une version HashMap en mémoire qu'un service qui ne fonctionne pas.
+
+La liste des APIs doit inclure au minimum les endpoints demandés, mais il est possible d'en ajouter d'autres si nécessaire.
+
+== Products
+
+Le service Products est un service qui permet de gérer des familles de produits et les produits associés.
+
+Contraintes :
+
+* Ce service doit fournir une implémentation de la "base de donnée" :
+** en h2 par default,
+** avec une hashmap si le profile DEV est activé. 
+*** /!\ Par souci de simplification, ce n'est pas grave si une connexion h2 et son repo jpa sont créées, il faut juste que le code utilise la hashmap
+* Ce service ne doit pas utiliser les annotations `@Compoment`, `@Service`, `@Repository`, `@Controller`.
+** @RestController peut-être utilisé, mais uniquement dans le cadre d'un controlleur HTTP
+* Ce service doit avec une architecture en couche :
+** La couche `controlleur` qui fait la validation des données et la transformation DTO -> Format interne.
+** La couche `service` qui fait la logique métier.
+** La couche `repository` qui fait la gestion de la base de donnée (ça peut être le repository JPA).
+
+=== Famille
+
+Une famille se présente sous la forme suivante :
+
+[source,json]
+----
+{
+  "id": "9a852ad2-4b0a-4f74-8e23-5305b733c263",
+  "name": "Bike",
+  "description": "All kind of bikes"
+}
+----
+
+Son ID est un UUID qui sera choisi par le service lors de la création de la famille, jamais par l'utilisateur.
+
+Le nom d'une famille est unique, mais la description ne l'est pas.
+
+Le nom doit faire entre 3 et 30 caractères.
+
+La description doit faire entre 5 et 100 caractères.
+
+Il faut fournir les endpoints suivants :
+
+==== `POST /api/v1/families` : Permet de créer une famille
+
+L'API doit répondre :
+
+- `201` avec la famille créée en body.
+- `400` si les données sont invalides.
+- `409` s'il y a un conflit de nom.
+
+==== `GET /api/v1/families` : Permet de récupérer toutes les familles
+
+Retourne la liste des familles enregistrées.
+
+==== `GET /api/v1/families/{id}` : Permet de récupérer une famille par son ID
+
+L'API doit répondre :
+
+- `200` avec la famille correspondante à l'ID si elle existe.
+- `400` si le format de l'id est invalide.
+- `404` si la famille n'existe pas.
+
+==== `PUT /api/v1/families/{id}` : Permet de mettre à jour une famille
+
+L'API doit répondre :
+
+- `200` avec la famille mise à jour.
+- `400` si les données sont invalides.
+- `409` s'il y a un conflit de nom.
+
+==== `DELETE /api/v1/families/{id}` : Permet de supprimer une famille
+
+On ne peut supprimer une famille que s'il n'y a plus de produit lié à elle.
+
+L'API doit répondre :
+
+- `204` si la famille est supprimée.
+- `409` si des produits sont encore liés à elle.
+- `404` si la famille n'existe pas.
+
+=== Product
+
+Un produit se présente sous la forme suivante :
+
+[source,json]
+----
+{
+  "id": "a6efa614-0235-4180-bbe7-0ff30f3bb858",
+  "name": "RC 500",
+  "description": "VELO ROUTE CYCLOTOURISTE",
+  "price": {
+    "amount": 875,
+    "currency": "EUR"
+  },
+  "family": {
+    "id": "9a852ad2-4b0a-4f74-8e23-5305b733c263",
+    "name": "Bike",
+    "description": "All kind of bikes"
+  }
+}
+----
+
+L'ID est un UUID généré par le service lors de la création du produit, jamais pas l'utilisateur.
+
+Le nom d'un produit doit faire entre 2 et 20 caractères.
+
+La description doit faire entre 5 et 100 caractères ou être nulle.
+
+Le prix est un objet avec un montant positif et une devise sur 3 caractères alphabétique majuscule (ex: EUR et non eur).
+
+La famille ne peut pas être nulle, ni modifiée par l'API des produits.
+
+Il faut fournir les endpoints suivants :
+
+==== `POST /api/v1/products` : Permet de créer un produit
+
+L'API doit répondre :
+
+- `201` avec le produit créé.
+- `400` si les données sont invalides ou si la famille n'existe pas.
+
+==== `GET /api/v1/products?familyname=Bike&minprice=100&maxprice=200` : Permet de récupérer tous les produits
+
+Les critères de filtrage `familyname`, `minprice` et `maxprice` sont tous optionnels.
+
+Il faut respecter la règle: `0 < minprice < maxprice`
+
+L'API doit retourner :
+
+- `200` avec la liste des produits correspondants aux critères.
+- `400` si les critères de filtrages sont incohérents.
+
+==== `GET /api/v1/products/{id}` : Permet de récupérer un produit par son ID
+
+L'API doit répondre :
+
+- `200` avec le produit correspondant à l'ID s'il existe.
+- `400` si le format de l'id est invalide.
+- `404` si le produit n'existe pas.
+
+==== `PUT /api/v1/products/{id}` : Permet de mettre à jour un produit
+
+Permet de mettre à jour un produit. +
+Ce endpoint permet aussi de changer la famille d'un produit.
+
+L'API doit répondre :
+
+- `200` avec le produit mise à jour.
+- `400` si les données sont invalides ou que la nouvelle famille n'existe pas.
+
+==== `DELETE /api/v1/products/{id}` : Permet de supprimer un produit
+
+Permet de supprimer un produit s'il n'est plus en stock dans aucun magasin (i.e. n'existe pas pour le magasin ou stock=0).
+
+Avant la suppression, tous les stocks à 0 du magasin doivent être supprimés.
+
+- `204` si le produit est supprimé.
+- `400` si l'id est invalide.
+- `409` s'il existe encore du stock pour ce produit.
+
+== Stores
+
+Le service Stores est un service qui permet de gérer les informations de contact, les magasins et leur stock des produits.
+
+Contraintes :
+
+* Ce service doit fournir une implémentation de la "base de donnée" en h2.
+* Le service ne peut utiliser que le client http `WebClient`.
+* La gestion des erreurs doit passer par un `ControllerAdvice`.
+
+=== Contact
+
+Un contact se présente sous la forme suivante :
+
+[source,json]
+----
+{
+  "id": 1,
+  "email": "my@email.com",
+  "phone": "0123456789",
+  "address": {
+    "street": "Rue truc",
+    "city": "Nantes",
+    "postalCode": "44300"
+  }
+}
+----
+
+L'ID est un entier généré par la base de donnée.
+
+L'email doit avoir un format valide.
+
+Le téléphone doit être un numéro de téléphone valide (10 chiffres).
+
+La rue doit faire entre 5 et 50 caractères.
+
+La ville doit faire entre 1 et 30 caractères.
+
+Le code postal doit être un code postal valide (5 chiffres).
+
+Il faut fournir les endpoints suivants :
+
+==== `POST /api/v1/contacts` : Permet de créer un contact
+
+L'API doit répondre :
+
+- `201` avec le contact créé en body.
+- `400` si les données sont invalides.
+
+==== `GET /api/v1/contacts?city=Nantes` : Permet de récupérer tous les contacts
+
+La liste des contacts optionnellement filtrée par la ville.
+
+==== `GET /api/v1/contacts/{id}` : Permet de récupérer un contact par son ID
+
+L'API doit répondre :
+
+- `200` avec le contact correspondant à l'ID s'il existe.
+- `400` si le format de l'id est invalide.
+- `404` si le contact n'existe pas.
+
+==== `PUT /api/v1/contacts/{id}` : Permet de mettre à jour un contact
+
+Lors d'un update de contact,
+on ne peut pas changer en même temps l'email et le téléphone.
+
+L'API doit répondre :
+
+- `200` avec le contact est mise à jour.
+- `400` si les données sont invalides.
+
+==== `DELETE /api/v1/contacts/{id}` : Permet de supprimer un contact
+
+Supprime un contact s'il n'est plus lié à aucun magasin.
+
+- `204` si le contact est supprimé.
+- `400` si l'id est invalide.
+- `409` s'il existe un magasin lié.
+
+=== Store
+
+Un magasin se présente sous la forme suivante :
+
+[source,json]
+----
+{
+  "id": 1,
+  "name": "Atlantis",
+  "contact": {
+    "id": 1,
+    "email": "my@email.com",
+    "phone": "0123456789",
+    "address": {
+      "street": "Rue truc",
+      "city": "Nantes",
+      "postalCode": "44300"
+    }
+  },
+  "products": [
+    {
+      "id": "e437f62a-432e-4aef-a440-6c86d3b09901",
+      "name": "RC 500",
+      "quantity": 1
+    }
+  ]
+}
+----
+
+L'ID est un entier généré par la base de donnée.
+
+Le nom doit faire entre 3 et 30 caractères.
+
+Le contact ne peut pas être nul.
+
+La liste de produits ne peut pas être nulle, mais peut être vide. +
+Elle ne peut pas être initialisée avec le magasin. +
+Elle ne peut pas contenir de doublons.
+
+Le nom du produit doit être cohérent avec le contenu du service product.
+
+Il faut fournir les endpoints suivants :
+
+==== `POST /api/v1/stores` : Permet de créer un magasin
+
+Cette API permet de créer un magasin.
+Si le contact n'existe pas, il est créé. S'il existe, il est utilisé sans mise à jour.
+
+On ne peut pas initialiser la liste de produits avec cette API.
+Si elle est fournie, elle doit être ignorée.
+
+On ne peut pas mettre à jour un magasin avec cette API.
+
+L'API doit répondre :
+
+- `201` avec le magasin créé.
+- `400` si les données sont invalides.
+
+==== `GET /api/v1/stores` : Permet de récupérer tous les magasins
+
+Cette API permet de récupérer la liste des magasins triée par nom croissant (i.e. a->z).
+
+==== `GET /api/v1/stores/{id}` : Permet de récupérer un magasin par son ID
+
+L'API doit répondre :
+
+- `200` avec le magasin correspondant à l'ID s'il existe.
+- `400` si le format de l'id est invalide.
+- `404` si le contact n'existe pas.
+
+==== `PUT /api/v1/stores/{id}` : Permet de mettre à jour un magasin
+
+Cette API permet de mettre à jour les informations d'un magasin,
+mais pas la liste de produits.
+
+Elle permet de changer le contact du magasin.
+
+L'API doit répondre :
+
+- `200` avec le magasin mise à jour.
+- `400` si les données sont invalides.
+
+==== `DELETE /api/v1/stores/{id}` : Permet de supprimer un magasin
+
+Supprime un magasin et les produits qui lui sont liés.
+
+L'API doit répondre :
+
+- `204` si le magasin est supprimé.
+- `400` si l'id est invalide.
+- `404` si le magasin n'existe pas.
+
+=== Stock
+
+Il est possible de gérer les stocks des produits dans les magasins avec trois APIs.
+
+==== `POST /api/v1/stores/{storeId}/products/{productId}/add?quantity=2` : Permet d'ajouter une quantité de produit au stock d'un magasin
+
+Le paramètre `quantity` est optionnel, mais doit être positif s'il est fourni.
+
+Si le paramètre `quantity` n'est pas fourni, il est initialisé à 1.
+
+Si le produit n'existe pas dans le magasin, il faut vérifier qu'il existe puis l'ajouter.
+
+L'API doit répondre :
+
+- `200` avec le produit mis à jour.
+- `400` si les données sont invalides.
+- `404` si le magasin n'existe pas.
+
+==== `POST /api/v1/stores/{storeId}/products/{productId}/remove?quantity=2` : Permet de retirer une quantité de produit du stock d'un magasin
+
+Le paramètre `quantity` est optionnel, mais doit être positif s'il est fourni.
+
+Si le paramètre `quantity` n'est pas fourni, il est initialisé à 1.
+
+L'API doit répondre :
+
+- `200` avec le produit mis à jour.
+- `400` si les données sont invalides.
+- `404` si le produit n'est pas dans le magasin ou le magasin n'existe pas.
+- `409` si le stock final est inférieur à 0.
+
+==== `DELETE /api/v1/stores/{storeId}/products` : Permet de retirer un produit du stock d'un magasin
+
+Cette API prend en body une liste de produits à retirer du stock.
+
+[source,json]
+----
+[
+"e437f62a-432e-4aef-a440-6c86d3b09901",
+ "9a852ad2-4b0a-4f74-8e23-5305b733c263"
+]
+----
+
+Si un produit n'est pas dans le magasin, il est ignoré.
+
+L'API doit répondre :
+
+- `204` si les produits sont retirés ou ignorés.
+- `400` si les données sont invalides ou si un produit est en double dans la liste.
+- `404` si le magasin n'existe pas.
+
+== Gateway
+
+Le service Gateway est un service qui permet de faire proxy devant les deux autres services. +
+C'est-à-dire qu'il ne fait que rediriger les requêtes vers les services appropriés après avoir vérifié l'authentification de l'utilisateur. +
+Lors de la redirection, il doit ajouter un header `X-User` avec le login de l'utilisateur.
+
+Les services `Products` et `Stores` doivent filtrer les requêtes,
+avec le code le plus commun possible (entre endpoint, voire entre services),
+et ne laisser passer que celles avec ce header.
+
+Pour qu'un utilisateur puisse appeler les endpoints autres que les ajouts et suppression de stock,
+il doit avoir le role `ADMIN`
+
+De base le service doit avoir un utilisateur `ADMIN` au login `ADMIN/ADMIN`
+
+Le endpoint `POST /api/v1/user` permet de créer un utilisateur avec le body suivant :
+
+[source,json]
+----
+{
+  "login": "user",
+  "password": "password",
+  "isAdmin": false
+}
+----
+
+Contraintes :
+
+* Le service doit fournir une gestion du `UserDetail` :
+** In memory si la property `gateway.security=inmemory`.
+** En base de donnée sinon.
+
+== Test
+
+Pensez à en faire au moins un peu.
