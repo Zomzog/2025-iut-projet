@@ -1,0 +1,21 @@
+meta {
+  name: Get Resa
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/peoples/2
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: ADMIN
+  password: ADMIN
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
