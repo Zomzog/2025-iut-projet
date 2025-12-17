@@ -1,0 +1,30 @@
+meta {
+  name: Delete one
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://localhost:8081/api/v1/peoples/1
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "age": 30,
+    "address": {
+      "street": "123 Main St",
+      "city": "Nantes",
+      "zipCode": "44000",
+      "country": "France"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

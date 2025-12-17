@@ -1,12 +1,18 @@
 == Rendu
 
-Le projet doit être rendu sous la forme d'un repository (gitlab ou github)
+Le projet doit être rendu sous la forme d'un repository (GitLab ou GitHub).
 
 Le projet est à faire maximum en trinôme.
 
 Vous pouvez ajouter un README si vous avez un choix à justifier ou un blocage.
 
-Il doit être rendu au plus tard le 25 janvier à 23h59
+Il doit être rendu au plus tard le 25 janvier à 23h59.
+
+Chaque service a son lot de contraintes,
+il vaut mieux un service qui fonctionne avec des contraintes non respectées qu'un service qui ne fonctionne pas du tout.
+
+Une collection avec des appels de base link:https://www.usebruno.com/[bruno] est fournie pour tester les services.
+
 
 == Sujet
 
@@ -17,35 +23,46 @@ Les trois services sont les suivants :
 - Peoples : un référentiel de personnes qui peuvent utiliser les salles.
 - Reservation : le service de réservation de salles.
 - BFF : Back For Front, un service qui fait le lien entre une application front et les deux autres services.
-Ici elle fait l'aggrégation des données des deux autres services.
+Ici, il fait l'agrégation des données des deux autres services.
 
-Un 4eme service (rooms) existe déjà pour avoir les informations sur les salles (nom, taille, heures possibles de réservation, ...).
-Ce service n'a pas besoin d'être modifié dans le cadre de ce projet. Il sera remplacé par une autre implementation au moment de la notation.
+Un 4ème service (rooms) existe déjà pour avoir les informations sur les salles (nom, taille, heures possibles de réservation, ...).
+Ce service n'a pas besoin d'être modifié dans le cadre de ce projet. Il sera remplacé par une autre implémentation au moment de la notation.
 
 Chaque service a sa propre spécification, des contraintes sont à respecter pour chaque service. +
 Elles ne sont pas impératives,
-par exemple s'il est demandé une base de donnée h2, il vaut mieux une version HashMap en mémoire qu'un service qui ne fonctionne pas.
+par exemple, s'il est demandé une base de données h2, il vaut mieux une version HashMap en mémoire qu'un service qui ne fonctionne pas.
 
 La liste des APIs doit inclure au minimum les endpoints demandés, mais il est possible d'en ajouter d'autres si nécessaire.
 
-Des requetes Bruno sont fournies pour tester les services (et garantir le format attendu)
+Des requêtes Bruno sont fournies pour tester les services (et garantir le format attendu).
+
+Les erreurs des services seront renvoyées sous la forme :
+
+[source, json]
+----
+{
+  "timestamp": "2025-01-01T12:00:00Z",
+  "status": 400,
+  "message": "Le message d'erreur détaillé"
+}
+----
 
 == Peoples
 
 Le service Peoples est un service qui permet de gérer les personnes qui peuvent utiliser les salles.
 
-Contraintes :
+=== Contraintes
 
-* Ce service doit fournir une implémentation de la "base de donnée" :
-** en h2 par default,
-** avec une hashmap si le profile DEV est activé. 
-*** /!\ Par souci de simplification, ce n'est pas grave si une connexion h2 et son repo jpa sont créées, il faut juste que le code utilise la hashmap
-* Ce service ne doit pas utiliser les annotations `@Compoment`, `@Service`, `@Repository`, `@Controller`.
-** @RestController peut-être utilisé, mais uniquement dans le cadre d'un controlleur HTTP
-* Ce service doit avec une architecture en couche/package :
-** La couche `controlleur` qui fait la validation des données et la transformation DTO -> Format interne.
+* Ce service doit fournir une implémentation de la "base de données" :
+** en h2 par défaut,
+** avec une HashMap si le profil DEV est activé.
+*** /!\ Par souci de simplification, ce n'est pas grave si une connexion h2 et son repo JPA sont créés, il faut juste que le code utilise la HashMap.
+* Ce service ne doit pas utiliser les annotations `@Component`, `@Service`, `@Repository`, `@Controller`.
+** `@RestController` peut être utilisé, mais uniquement dans le cadre d'un contrôleur HTTP.
+* Ce service doit avoir une architecture en couche/package :
+** La couche `controller` qui fait la validation des données et la transformation DTO -> Format interne.
 ** La couche `service` qui fait la logique métier.
-** La couche `repository` qui fait la gestion de la base de donnée (ça peut être le repository JPA).
+** La couche `repository` qui fait la gestion de la base de données (ça peut être le repository JPA).
 
 Une personne se présente sous la forme suivante :
 
@@ -64,3 +81,272 @@ Une personne se présente sous la forme suivante :
 }
 ----
 
+Son ID est un Long qui sera fourni par la BDD lors de la création de la personne, jamais par l'utilisateur.
+
+Le nom de famille doit faire entre 2 et 50 caractères et ne peut pas être vide.
+
+Le prénom doit faire entre 2 et 20 caractères et ne peut pas être vide.
+
+L'âge doit être entre 18 et 119 ans.
+
+L'adresse est un objet avec les champs suivants :
+* street : entre 5 et 100 caractères.
+* city : entre 2 et 50 caractères.
+* zipCode : 5 chiffres.
+* country : entre 2 et 50 caractères.
+
+=== Endpoints
+
+Il faut fournir les endpoints suivants :
+
+==== `POST /api/v1/peoples` : Permet de créer une personne
+
+L'API doit répondre :
+
+- `201` avec la personne créée en body.
+- `400` si les données sont invalides.
+
+==== `GET /api/v1/peoples?name=Doe` : Permet de récupérer toutes les personnes
+
+Retourne la liste des personnes enregistrées. Le paramètre `name` est optionnel et permet de filtrer les personnes par nom de famille s'il est présent.
+
+==== `GET /api/v1/peoples/{id}` : Permet de récupérer une personne par son ID
+
+L'API doit répondre :
+
+- `200` avec la personne correspondante à l'ID si elle existe.
+- `400` si le format de l'id est invalide.
+- `404` si la personne n'existe pas.
+
+==== `PUT /api/v1/peoples/{id}` : Permet de mettre à jour une personne
+
+L'API doit répondre :
+
+- `200` avec la personne mise à jour.
+- `400` si les données sont invalides.
+
+==== `DELETE /api/v1/peoples/{id}` : Permet de supprimer une personne
+
+L'API doit répondre :
+
+- `204` si la personne est supprimée.
+- `404` si la personne n'existe pas.
+
+Si la personne a des réservations en cours (où elle est owner), elles doivent être supprimées avant de supprimer la personne.
+
+== Reservation
+
+Une réservation se présente sous la forme suivante :
+
+[source,json]
+----
+{
+  "id": "a6efa614-0235-4180-bbe7-0ff30f3bb858",
+  "owner": 4,
+  "peoples": [1, 2, 3],
+  "roomId": 42,
+  "start": 8,
+  "end": 10,
+  "day": "2025-12-25"
+}
+----
+
+L'ID est un UUID généré par le service lors de la création de la réservation, jamais par l'utilisateur.
+
+L'owner est l'ID de la personne qui crée la réservation.
+Cette personne doit exister dans le service Peoples.
+
+La liste des personnes est une liste d'ID de personnes existantes dans le service Peoples
+et ne peut pas être nulle ou vide.
+
+L'ID de la salle doit exister dans le service Rooms.
+
+L'heure de début doit être entre 0 et 23.
+
+L'heure de fin doit être entre 1 et 24.
+
+L'heure de fin doit être strictement supérieure à l'heure de début.
+
+La date doit être au format ISO `yyyy-MM-dd` et ne peut pas être dans le passé lors de la création.
+
+Par souci de simplification,
+il est possible, mais pas obligatoire, de considérer que les réservations sont toujours de maximum 1h.
+
+=== Contraintes :
+
+* Ce service doit fournir une implémentation de la "base de données" en h2. (/!\ end et day sont des mots-clés réservés en h2, il faut utiliser un autre nom de colonne).
+* Le service ne peut utiliser que le client http `WebClient`.
+* La gestion des erreurs doit passer par un `ControllerAdvice`.
+
+Il faut fournir les endpoints suivants :
+
+=== Endpoints
+
+==== `POST /api/v1/reservations` : Permet de créer une réservation
+
+L'API doit répondre :
+
+- `201` avec la réservation créée.
+- `400` si les données sont invalides (heure, date, personnes inexistantes, salle inexistante, ...).
+- `409` si la salle est déjà réservée pour le créneau demandé.
+
+==== `GET /api/v1/reservations?roomId=1&dayStart=2025-12-25&dayEnd=2025-12-26` : Permet de récupérer toutes les réservations
+
+Les critères de filtrage `roomId`, `dayStart` et `dayEnd` sont tous optionnels.
+
+Il faut respecter la règle si elles sont fournies : `dayStart <= dayEnd`.
+
+L'API doit retourner :
+
+- `200` avec la liste des réservations correspondantes aux critères.
+- `400` si les critères de filtrage sont incohérents.
+
+==== `GET /api/v1/reservations/{id}` : Permet de récupérer une réservation par son ID
+
+L'API doit répondre :
+
+- `200` avec la réservation correspondante à l'ID si elle existe.
+- `400` si le format de l'id est invalide.
+- `404` si la réservation n'existe pas.
+
+==== `PUT /api/v1/reservations/{id}` : Permet de mettre à jour une réservation
+
+Permet de mettre à jour une réservation.
+
+Ce endpoint permet de changer la liste des personnes, la salle, l'heure de début et de fin, et la date.
+Ce endpoint ne permet pas de changer le ownerId.
+
+L'API doit répondre :
+
+- `200` avec la réservation mise à jour.
+- `400` si les données sont invalides.
+- `409` si la salle est déjà réservée pour le créneau demandé.
+
+==== `DELETE /api/v1/reservations/{id}` : Permet de supprimer une réservation
+
+Permet de supprimer une réservation.
+
+- `204` si la réservation est supprimée.
+- `400` si l'id est invalide.
+
+== BFF
+
+Le service BFF (Back For Front) est un service qui permet de faire proxy devant les deux autres services.
+C'est-à-dire qu'il ne fait que rediriger les requêtes vers les services appropriés après avoir vérifié l'authentification de l'utilisateur.
+Lors de la redirection, il doit ajouter un header `X-User` avec le login de l'utilisateur.
+
+Il permet aussi de faire de l'agrégation de données entre les deux services.
+
+Les services `reservation` et `people` doivent filtrer les requêtes,
+avec le code le plus commun possible (entre endpoints, voire entre services),
+et ne laisser passer que celles avec ce header.
+
+Pour qu'un utilisateur puisse appeler les endpoints de création, modification ou suppression d'une personne,
+il doit avoir le rôle `ADMIN`.
+
+De base, le service doit avoir un utilisateur `ADMIN` au login `ADMIN/ADMIN`.
+
+Dans le cadre de ce projet, seuls sont requis un endpoint de création de user (au sens spring-security) et deux endpoints d'agrégation.
+
+=== Endpoints
+
+Le endpoint `POST /api/v1/user` permet de créer un utilisateur avec le body suivant :
+
+[source,json]
+----
+{
+  "login": "user",
+  "password": "password",
+  "isAdmin": false
+}
+----
+
+L'API doit répondre :
+
+- `201` sans body si l'utilisateur est créé.
+- `429` si le login est déjà utilisé.
+
+==== GET `/peoples/{id}` : Permet d'avoir les informations d'une personne en agrégeant les données des services Peoples et Reservation
+
+[source,json]
+----
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "age": 30,
+  "address": {
+    "street": "123 Main St",
+    "city": "Nantes",
+    "zipCode": "44000",
+    "country": "France"
+  },
+  "reservations": [
+      "a6efa614-0235-4180-bbe7-0ff30f3bb858"
+  ]
+}
+----
+
+Le champ `reservations` est une liste des IDs des réservations où la personne est owner.
+
+L'API doit répondre :
+
+- `200` avec la personne correspondante à l'ID si elle existe.
+- `400` si le format de l'id est invalide.
+- `404` si la personne n'existe pas.
+
+==== GET `/reservations/{id}`: Permet d'avoir les informations d'une réservation en agrégeant les données des services Reservation, Peoples et Rooms
+
+[source,json]
+----
+{
+  "id": "a6efa614-0235-4180-bbe7-0ff30f3bb858",
+  "owner": {
+    "id": 4,
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  "peoples": [
+    {
+      "id": 1,
+      "firstName": "Jane",
+      "lastName": "Smith"
+    },
+    {
+      "id": 2,
+      "firstName": "Bob",
+      "lastName": "Johnson"
+    },
+    {
+      "id": 3,
+      "firstName": "DELETED",
+      "lastName": "DELETED"
+    }
+  ],
+  "roomId": {
+    "id": 42,
+    "name": "Conference Room A"
+  },
+  "start": 8,
+  "end": 10,
+  "day": "2025-12-25"
+}
+----
+
+Si une personne a été supprimée et donc n'existe plus dans people, son nom et prénom doivent être remplacés par "DELETED".
+
+L'API doit répondre :
+
+- `200` avec la réservation correspondante à l'ID si elle existe.
+- `400` si le format de l'id est invalide.
+- `404` si la réservation n'existe pas.
+
+=== Contraintes :
+
+* Le service doit fournir une gestion du `UserDetail` :
+** In memory si la property `bff.security=inmemory`.
+** En base de données sinon.
+* Le BFF n'a pas de cache, il appelle toujours les autres services.
+
+== Test
+
+Pensez à en faire au moins un peu (Unitaire, Layers, SpringBootTest...).
