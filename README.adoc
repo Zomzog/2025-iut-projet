@@ -11,6 +11,7 @@ Il doit être rendu au plus tard le 25 janvier à 23h59.
 Chaque service a son lot de contraintes,
 il vaut mieux un service qui fonctionne avec des contraintes non respectées qu'un service qui ne fonctionne pas du tout.
 
+Une collection avec des appels de base link:https://www.usebruno.com/[bruno] est fournie pour tester les services.
 
 
 == Sujet
@@ -80,7 +81,7 @@ Une personne se présente sous la forme suivante :
 }
 ----
 
-Son ID est un Long qui sera fourni par la BDD lors de la création de la famille, jamais par l'utilisateur.
+Son ID est un Long qui sera fourni par la BDD lors de la création de la personne, jamais par l'utilisateur.
 
 Le nom de famille doit faire entre 2 et 50 caractères et ne peut pas être vide.
 
@@ -107,7 +108,7 @@ L'API doit répondre :
 
 ==== `GET /api/v1/peoples?name=Doe` : Permet de récupérer toutes les personnes
 
-Retourne la liste des familles enregistrées. Le paramètre `name` est optionnel et permet de filtrer les personnes par nom de famille s'il est présent.
+Retourne la liste des personnes enregistrées. Le paramètre `name` est optionnel et permet de filtrer les personnes par nom de famille s'il est présent.
 
 ==== `GET /api/v1/peoples/{id}` : Permet de récupérer une personne par son ID
 
@@ -181,7 +182,7 @@ Il faut fournir les endpoints suivants :
 
 === Endpoints
 
-==== `POST /api/v1/reservations` : Permet de créer un produit
+==== `POST /api/v1/reservations` : Permet de créer une réservation
 
 L'API doit répondre :
 
