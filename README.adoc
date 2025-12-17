@@ -23,7 +23,7 @@ Les trois services sont les suivants :
 - Peoples : un référentiel de personnes qui peuvent utiliser les salles.
 - Reservation : le service de réservation de salles.
 - BFF : Back For Front, un service qui fait le lien entre une application front et les deux autres services.
-Ici, elle fait l'agrégation des données des deux autres services.
+Ici, il fait l'agrégation des données des deux autres services.
 
 Un 4ème service (rooms) existe déjà pour avoir les informations sur les salles (nom, taille, heures possibles de réservation, ...).
 Ce service n'a pas besoin d'être modifié dans le cadre de ce projet. Il sera remplacé par une autre implémentation au moment de la notation.
@@ -55,10 +55,10 @@ Le service Peoples est un service qui permet de gérer les personnes qui peuvent
 
 * Ce service doit fournir une implémentation de la "base de données" :
 ** en h2 par défaut,
-** avec une hashmap si le profil DEV est activé.
-*** /!\ Par souci de simplification, ce n'est pas grave si une connexion h2 et son repo JPA sont créés, il faut juste que le code utilise la hashmap.
+** avec une HashMap si le profil DEV est activé.
+*** /!\ Par souci de simplification, ce n'est pas grave si une connexion h2 et son repo JPA sont créés, il faut juste que le code utilise la HashMap.
 * Ce service ne doit pas utiliser les annotations `@Component`, `@Service`, `@Repository`, `@Controller`.
-** @RestController peut être utilisé, mais uniquement dans le cadre d'un contrôleur HTTP.
+** `@RestController` peut être utilisé, mais uniquement dans le cadre d'un contrôleur HTTP.
 * Ce service doit avoir une architecture en couche/package :
 ** La couche `controller` qui fait la validation des données et la transformation DTO -> Format interne.
 ** La couche `service` qui fait la logique métier.
@@ -174,7 +174,7 @@ il est possible, mais pas obligatoire, de considérer que les réservations sont
 
 === Contraintes :
 
-* Ce service doit fournir une implémentation de la "base de données" en h2. (/!\ end et day sont des mots clé réservés en h2, il faut utiliser un autre nom de colonne).
+* Ce service doit fournir une implémentation de la "base de données" en h2. (/!\ end et day sont des mots-clés réservés en h2, il faut utiliser un autre nom de colonne).
 * Le service ne peut utiliser que le client http `WebClient`.
 * La gestion des erreurs doit passer par un `ControllerAdvice`.
 
@@ -246,7 +246,7 @@ il doit avoir le rôle `ADMIN`.
 
 De base, le service doit avoir un utilisateur `ADMIN` au login `ADMIN/ADMIN`.
 
-Dans le cadre de ce projet, seul sont requis un endpoint de création de user (au sens spring-security) et deux endpoints d'aggrégation.
+Dans le cadre de ce projet, seuls sont requis un endpoint de création de user (au sens spring-security) et deux endpoints d'agrégation.
 
 === Endpoints
 
@@ -345,7 +345,7 @@ L'API doit répondre :
 * Le service doit fournir une gestion du `UserDetail` :
 ** In memory si la property `bff.security=inmemory`.
 ** En base de données sinon.
-* The BFF has no cache, it always calls the other services.
+* Le BFF n'a pas de cache, il appelle toujours les autres services.
 
 == Test
 
