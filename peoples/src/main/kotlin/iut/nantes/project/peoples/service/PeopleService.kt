@@ -8,11 +8,11 @@ class PeopleService(
     private val database: PeopleDatabase
 ){
 
-    private fun resolveAddress(incomingAddress: Address): Address {
+    private fun resolveAddress(address: Address): Address {
         val existing = database.findAddress(
-            incomingAddress.street, incomingAddress.city, incomingAddress.zipCode, incomingAddress.country
+            address.street, address.city, address.zipCode, address.country
         )
-        return existing ?: incomingAddress
+        return existing ?: address
     }
 
     fun createPeople(people: People): People {

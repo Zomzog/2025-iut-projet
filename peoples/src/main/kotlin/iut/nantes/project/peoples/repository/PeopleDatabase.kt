@@ -9,5 +9,10 @@ interface PeopleDatabase {
 
     fun findAll(name: String?): List<People>
 
-    fun findAddress(street: String, city: String, zip: String, country: String): Address?
+    fun findAddress(
+        street: String,
+        city: String,
+        zip: String,
+        country: String
+    ): Address?
 }

@@ -16,7 +16,17 @@ class JpaPeopleDatabase(
         else peopleRepository.findPeopleByLastName(name)
     }
 
-    override fun findAddress(street: String, city: String, zip: String, country: String): Address? {
-        return addressRepository.findByStreetAndCityAndZipCodeAndCountry(street, city, zip, country)
+    override fun findAddress(
+        street: String,
+        city: String,
+        zip: String,
+        country: String
+    ): Address? {
+        return addressRepository.findByStreetAndCityAndZipCodeAndCountry(
+            street,
+            city,
+            zip,
+            country
+        )
     }
 }

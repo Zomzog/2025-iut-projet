@@ -14,15 +14,15 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class PeopleConfig {
 
-    @Bean("peopleDatabase")
+    @Bean
     @Profile("dev")
     fun devDatabase(): PeopleDatabase {
         return HashPeopleDatabase()
     }
 
-    @Bean("peopleDatabase")
+    @Bean
     @Profile("!dev")
-    fun prodDatabase(
+    fun database(
         peopleRepository: PeopleRepository,
         addressRepository: AddressRepository
     ): PeopleDatabase {

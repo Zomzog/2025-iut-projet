@@ -19,10 +19,15 @@ class HashPeopleDatabase : PeopleDatabase {
             addressToSave
         }
 
-        val newId = if (people.id == 0L) peopleIdGenerator else people.id
-        peopleIdGenerator++
+        val newId = if (people.id == 0L) {
+            peopleIdGenerator++
+        } else people.id
 
-        val savedPeople = people.copy(id = newId, address = finalAddress)
+
+        val savedPeople = people.copy(
+            id = newId,
+            address = finalAddress
+        )
         peoples[newId] = savedPeople
 
         return savedPeople
@@ -40,14 +45,27 @@ class HashPeopleDatabase : PeopleDatabase {
 
     override fun findAll(name: String?): List<People> {
         return if (name == null) {
-            peoples.values.toList()
+            peoples
+                .values
+                .toList()
         } else {
-            peoples.values.filter { it.lastName == name }
+            peoples
+                .values
+                .filter {
+                    it.lastName == name
+                }
         }
     }
 
-    override fun findAddress(street: String, city: String, zip: String, country: String): Address? {
-        return addresses.values.find {
+    override fun findAddress(
+        street: String,
+        city: String,
+        zip: String,
+        country: String
+    ): Address? {
+        return addresses
+            .values
+            .find {
             it.street == street && it.city == city && it.zipCode == zip && it.country == country
         }
     }

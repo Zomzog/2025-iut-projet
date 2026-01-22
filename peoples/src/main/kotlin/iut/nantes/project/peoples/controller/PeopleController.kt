@@ -46,7 +46,10 @@ class PeopleController(private val peopleService: PeopleService) {
     }
 
     @PutMapping("/api/v1/peoples/{id}")
-    fun updatePeople(@PathVariable id: Long, @Valid @RequestBody peopleDTO: PeopleDTO): ResponseEntity<People> {
+    fun updatePeople(
+        @PathVariable id: Long,
+        @Valid @RequestBody peopleDTO: PeopleDTO
+    ): ResponseEntity<People> {
         val peopleEntity = dtoToEntity(peopleDTO)
         val updated = peopleService.updatePeople(id, peopleEntity)
         return if (updated != null) {
@@ -72,7 +75,12 @@ class PeopleController(private val peopleService: PeopleService) {
             zipCode = dto.address.zipCode,
             country = dto.address.country
         )
-        return People(0, dto.firstName, dto.lastName, dto.age, address)
+        return People(0,
+            dto.firstName,
+            dto.lastName,
+            dto.age,
+            address
+        )
     }
 
 }
