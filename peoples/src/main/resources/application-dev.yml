@@ -1,0 +1,6 @@
+
+spring:
+  application.name: peoplesDev
+
+server:
+  port: 8081
