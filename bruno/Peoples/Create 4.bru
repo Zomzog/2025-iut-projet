@@ -1,0 +1,38 @@
+meta {
+  name: Create 4
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8081/api/v1/peoples
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "firstName": "First4",
+    "lastName": "Last4",
+    "age": 34,
+    "address": {
+      "street": "444 Main St",
+      "city": "Nant4",
+      "zipCode": "44444",
+      "country": "Pony"
+    }
+  }
+}
+
+vars:post-response {
+  user4: res.body.id
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,47 @@
+meta {
+  name: Update with wrong id
+  type: http
+  seq: 8
+}
+
+put {
+  url: http://localhost:8081/api/v1/peoples/{{user1}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  { 
+    "id": "{{user2}}",
+    "firstName": "John3",
+    "lastName": "Doe2",
+    "age": 31,
+    "address": {
+      "street": "124 Main St",
+      "city": "NanteS",
+      "zipCode": "34000",
+      "country": "Pony"
+    }
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: eq {{user1}}
+  res.body.firstName: eq John3
+  res.body.lastName: eq Doe2
+  res.body.age: eq 31
+  res.body.address.street: eq 124 Main St
+  res.body.address.city: eq NanteS
+  res.body.address.zipCode: eq '34000'
+  res.body.address.country: eq Pony
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

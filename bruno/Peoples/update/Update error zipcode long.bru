@@ -1,0 +1,38 @@
+meta {
+  name: Create error zipcode long
+  type: http
+  seq: 29
+}
+
+post {
+  url: http://localhost:8081/api/v1/peoples
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "firstName": "First3",
+    "lastName": "Last3",
+    "age": 33,
+    "address": {
+      "street": "333 Main St",
+      "city": "Nant3",
+      "zipCode": "333333",
+      "country": "Pony"
+    }
+  }
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

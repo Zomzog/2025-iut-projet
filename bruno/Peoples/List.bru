@@ -1,13 +1,17 @@
 meta {
   name: List
   type: http
-  seq: 4
+  seq: 6
 }
 
 get {
   url: http://localhost:8081/api/v1/peoples
   body: none
   auth: inherit
+}
+
+headers {
+  X-User: pony
 }
 
 body:json {
@@ -22,6 +26,19 @@ body:json {
       "country": "France"
     }
   }
+}
+
+assert {
+  res.status: eq 200
+  res.body[0].id: {{user1}}
+  res.body[0].firstName: eq John
+  res.body[0].lastName: eq Doe
+  res.body[0].age: eq 30
+  res.body[0].address.street: eq 123 Main St
+  res.body[0].address.city: eq Nantes
+  res.body[0].address.zipCode: eq '44000'
+  res.body[0].address.country: eq France
+  res.body: length 3
 }
 
 settings {

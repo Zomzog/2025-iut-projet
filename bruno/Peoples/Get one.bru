@@ -1,27 +1,29 @@
 meta {
   name: Get one
   type: http
-  seq: 5
+  seq: 10
 }
 
 get {
-  url: http://localhost:8081/api/v1/peoples/1
+  url: http://localhost:8081/api/v1/peoples/{{user2}}
   body: none
   auth: inherit
 }
 
-body:json {
-  {
-    "firstName": "John",
-    "lastName": "Doe",
-    "age": 30,
-    "address": {
-      "street": "123 Main St",
-      "city": "Nantes",
-      "zipCode": "44000",
-      "country": "France"
-    }
-  }
+headers {
+  X-User: pony
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: isNumber
+  res.body.firstName: eq Johna
+  res.body.lastName: eq Doa
+  res.body.age: eq 18
+  res.body.address.street: eq 321 Main St
+  res.body.address.city: eq Nanta
+  res.body.address.zipCode: eq '44200'
+  res.body.address.country: eq France
 }
 
 settings {

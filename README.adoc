@@ -115,7 +115,8 @@ Retourne la liste des personnes enregistrées. Le paramètre `name` est optionne
 L'API doit répondre :
 
 - `200` avec la personne correspondante à l'ID si elle existe.
-- `400` si le format de l'id est invalide.
+- `400` si le format de l'id est inv
+alide.
 - `404` si la personne n'existe pas.
 
 ==== `PUT /api/v1/peoples/{id}` : Permet de mettre à jour une personne

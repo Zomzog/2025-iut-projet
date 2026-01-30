@@ -1,13 +1,17 @@
 meta {
   name: Delete one
   type: http
-  seq: 6
+  seq: 11
 }
 
 delete {
-  url: http://localhost:8081/api/v1/peoples/1
+  url: http://localhost:8081/api/v1/peoples/{{user2}}
   body: none
   auth: inherit
+}
+
+headers {
+  X-User: pony
 }
 
 body:json {
@@ -22,6 +26,10 @@ body:json {
       "country": "France"
     }
   }
+}
+
+assert {
+  res.status: eq 204
 }
 
 settings {

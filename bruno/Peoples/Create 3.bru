@@ -1,0 +1,38 @@
+meta {
+  name: Create 3
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8081/api/v1/peoples
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "firstName": "First3",
+    "lastName": "Last3",
+    "age": 33,
+    "address": {
+      "street": "333 Main St",
+      "city": "Nant3",
+      "zipCode": "33333",
+      "country": "Pony"
+    }
+  }
+}
+
+vars:post-response {
+  user3: res.body.id
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+headers {
+  X-User: pony
+}

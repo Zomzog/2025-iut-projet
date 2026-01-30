@@ -1,0 +1,50 @@
+meta {
+  name: Create 2
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8081/api/v1/peoples
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "firstName": "Johna",
+    "lastName": "Doa",
+    "age": 18,
+    "address": {
+      "street": "321 Main St",
+      "city": "Nanta",
+      "zipCode": "44200",
+      "country": "France"
+    }
+  }
+}
+
+vars:post-response {
+  user2: res.body.id
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: isNumber
+  res.body.firstName: eq Johna
+  res.body.lastName: eq Doa
+  res.body.age: eq 18
+  res.body.address.street: eq 321 Main St
+  res.body.address.city: eq Nanta
+  res.body.address.zipCode: eq '44200'
+  res.body.address.country: eq France
+}
+
+headers {
+  X-User: pony
+}

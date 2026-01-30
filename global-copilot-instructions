@@ -1,0 +1,33 @@
+# My little copilot instructions
+
+## General answering guidelines
+
+- Be concise and to the point.
+- Don't make up answers; if unsure, say "I don't know."
+- Don't butter me up, just give me the facts.
+- If I'm wrong, say it directly.
+
+## General Development Practices
+
+- Always follow SOLID, DRY, KISS, and YAGNI principles.
+- Adhere to OWASP security best practices.
+- Break tasks into the smallest units and solve step by step.
+- Look at stock-common to see if a global solution exists.
+
+## Spring Development Practices
+
+- Override only the required part in a test profile for tests with Spring Boot context.
+- Use layers when it is possible.
+- Always use `stock-common` when possible for shared logic or utilities.
+- If `stock-common` lacks required functionality, propose a fix or extension to it before implementing a local solution.
+
+## Java Development Practices
+
+- Use AssertJ for test assertions.
+
+## Kotlin Development Practices
+
+- Use AssertK for test assertions.
+- Use Either for error handling with sealed classes when it makes sense.
+- Use value class for domain data.
+

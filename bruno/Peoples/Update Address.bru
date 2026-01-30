@@ -1,13 +1,17 @@
 meta {
   name: Update Address
   type: http
-  seq: 3
+  seq: 9
 }
 
 put {
   url: http://localhost:8081/api/v1/peoples/1/address
   body: json
   auth: inherit
+}
+
+headers {
+  X-User: pony
 }
 
 body:json {
