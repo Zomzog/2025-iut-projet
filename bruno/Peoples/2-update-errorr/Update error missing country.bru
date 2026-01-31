@@ -1,0 +1,37 @@
+meta {
+  name: Update error missing country
+  type: http
+  seq: 39
+}
+
+put {
+  url: http://localhost:8081/api/v1/peoples/{{user4}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "age": 30,
+    "address": {
+      "street": "123 Main St",
+      "city": "Nantes",
+      "zipCode": "44000"
+    }
+  }
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

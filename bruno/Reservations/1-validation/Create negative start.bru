@@ -1,0 +1,36 @@
+meta {
+  name: Create negative start
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:8082/api/v1/reservations
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user3}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 45,
+    "start": -2,
+    "end": -1,
+    "day": "2026-12-10"
+  }
+  
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

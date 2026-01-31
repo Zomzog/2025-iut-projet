@@ -1,11 +1,11 @@
 meta {
-  name: Get Resa
+  name: Get Resa deleted room
   type: http
-  seq: 3
+  seq: 15
 }
 
 get {
-  url: http://localhost:8080/reservations/{{resa1}}
+  url: http://localhost:8080/reservations/{{resa11}}
   body: none
   auth: basic
 }
@@ -24,47 +24,43 @@ tests {
   const r3 = bru.getVar("resa3");
   const r4 = bru.getVar("resa4");
   const r5 = bru.getVar("resa5");
+  const r10 = bru.getVar("resa10");
+  const r11 = bru.getVar("resa11");
   const u1 = bru.getVar("user1");
   const u2 = bru.getVar("user2");
   const u3 = bru.getVar("user3");
   const u4 = bru.getVar("user4");
   const u5 = bru.getVar("user5");
+  const u10 = bru.getVar("user10");
+  const u11 = bru.getVar("user11");
   
   const expectedObject = {
-    "id": "697f07be-4e44-41a5-8286-77e1d67fe2da",
+    "id": r11,
     "owner": {
-      "id": u1,
-      "firstName": "John3",
-      "lastName": "Doe2"
-    },
+        "id": u1,
+        "firstName": "John3",
+        "lastName": "Doe2"
+      },
     "peoples": [
       {
         "id": u1,
         "firstName": "John3",
         "lastName": "Doe2"
-      },
-      {
-        "id": u3,
-        "firstName": "First3",
-        "lastName": "Last3"
       }
     ],
     "roomId": {
       "id": 42,
-      "name": "La salle 42"
+      "name": "pony"
     },
     "start": 8,
     "end": 9,
-    "day": "2026-11-01"
+    "day": "2026-09-01"
   };
   
   
   const expectedIds = [u4, u3];
   test("Response IDs should be [ok]", function() {
-    expect(res.getStatus()).to.equal(200);
-    const errorMessage = `\nExpected: ${JSON.stringify(expectedObject, null, 2)}\nActual: ${JSON.stringify(data, null, 2)}`;
-    
-   expect(data, errorMessage).to.deep.equal(expectedObject);
+    expect(res.getStatus()).to.equal(500);
   });
 }
 

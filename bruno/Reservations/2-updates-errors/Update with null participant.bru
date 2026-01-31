@@ -1,0 +1,36 @@
+meta {
+  name: Update with null participant
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:8082/api/v1/reservations/{{resa6}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user3}},
+    "peoples": null,
+    "roomId": 42,
+    "start": 9,
+    "end": 10,
+    "day": "2026-12-04"
+  }
+  
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

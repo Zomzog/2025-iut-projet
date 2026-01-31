@@ -1,21 +1,22 @@
 meta {
-  name: Get people
+  name: Get Resa rename
   type: http
-  seq: 2
+  seq: 13
 }
 
 get {
-  url: http://localhost:8080/peoples/{{user1}}
+  url: http://localhost:8080/reservations/{{resa11}}
   body: none
   auth: basic
 }
 
 auth:basic {
-  username: theUser
-  password: thePassword
+  username: ADMIN
+  password: ADMIN
 }
 
 tests {
+  
   const data = res.getBody();
   
   const r1 = bru.getVar("resa1");
@@ -23,36 +24,37 @@ tests {
   const r3 = bru.getVar("resa3");
   const r4 = bru.getVar("resa4");
   const r5 = bru.getVar("resa5");
+  const r10 = bru.getVar("resa10");
+  const r11 = bru.getVar("resa11");
   const u1 = bru.getVar("user1");
   const u2 = bru.getVar("user2");
   const u3 = bru.getVar("user3");
   const u4 = bru.getVar("user4");
   const u5 = bru.getVar("user5");
+  const u10 = bru.getVar("user10");
+  const u11 = bru.getVar("user11");
   
   const expectedObject = {
-    "firstName": "John3",
-    "lastName": "Doe2",
-    "age": 31,
-    "address": {
-      "street": "124 Main St",
-      "city": "NanteS",
-      "zipCode": "34000",
-      "country": "Pony"
+    "id": r11,
+    "owner": {
+        "id": u1,
+        "firstName": "John3",
+        "lastName": "Doe2"
+      },
+    "peoples": [
+      {
+        "id": u1,
+        "firstName": "John3",
+        "lastName": "Doe2"
+      }
+    ],
+    "roomId": {
+      "id": 42,
+      "name": "pony"
     },
-    "reservations": [
-      r1,r2,r3,r4,r5
-    ]
-  };
-  
-  
-  const expectedObject2 = {
-    "id": r1,
-    "owner": u1,
-    "peoples": [u4, u3],
-    "roomId": 2,
-    "start": 7,
-    "end": 8,
-    "day": "2026-11-05"
+    "start": 8,
+    "end": 9,
+    "day": "2026-09-01"
   };
   
   

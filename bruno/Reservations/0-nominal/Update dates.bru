@@ -1,18 +1,29 @@
 meta {
-  name: Get people
+  name: Update dates
   type: http
-  seq: 2
+  seq: 17
 }
 
-get {
-  url: http://localhost:8080/peoples/{{user1}}
-  body: none
-  auth: basic
+put {
+  url: http://localhost:8082/api/v1/reservations/{{resa1}}
+  body: json
+  auth: inherit
 }
 
-auth:basic {
-  username: theUser
-  password: thePassword
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user1}},
+    "peoples": [{{user4}}, {{user3}}],
+    "roomId": 2,
+    "start": 7,
+    "end": 8,
+    "day": "2026-11-05"
+  }
+  
 }
 
 tests {
@@ -30,22 +41,6 @@ tests {
   const u5 = bru.getVar("user5");
   
   const expectedObject = {
-    "firstName": "John3",
-    "lastName": "Doe2",
-    "age": 31,
-    "address": {
-      "street": "124 Main St",
-      "city": "NanteS",
-      "zipCode": "34000",
-      "country": "Pony"
-    },
-    "reservations": [
-      r1,r2,r3,r4,r5
-    ]
-  };
-  
-  
-  const expectedObject2 = {
     "id": r1,
     "owner": u1,
     "peoples": [u4, u3],
@@ -55,13 +50,11 @@ tests {
     "day": "2026-11-05"
   };
   
-  
   const expectedIds = [u4, u3];
   test("Response IDs should be [ok]", function() {
     expect(res.getStatus()).to.equal(200);
-    const errorMessage = `\nExpected: ${JSON.stringify(expectedObject, null, 2)}\nActual: ${JSON.stringify(data, null, 2)}`;
     
-   expect(data, errorMessage).to.deep.equal(expectedObject);
+   expect(data).to.deep.equal(expectedObject);
   });
 }
 

@@ -1,0 +1,56 @@
+meta {
+  name: List one day
+  type: http
+  seq: 14
+}
+
+get {
+  url: http://localhost:8082/api/v1/reservations?dayStart=2026-11-01&dayEnd=2026-11-01
+  body: none
+  auth: inherit
+}
+
+params:query {
+  dayStart: 2026-11-01
+  dayEnd: 2026-11-01
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "id": "201e5d27-7ca3-422a-b6c9-5c6f1423ab77",
+    "roomId": 1,
+    "ownerId": 1,
+    "peoples": [1, 2],
+    "day": "2024-06-18",
+    "start": 10,
+    "end": 11
+  }
+}
+
+tests {
+  test("status is ok", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  const data = res.getBody();
+  const u1 = bru.getVar("resa1");
+  const u2 = bru.getVar("resa3");
+  
+  const expectedIds = [u1];
+  test("Response IDs should be [ok]", function() {
+    expect(data).to.be.an('array');
+    
+    const actualIds = data.map(item => item.id);
+    
+    expect(actualIds).to.deep.equal(expectedIds);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

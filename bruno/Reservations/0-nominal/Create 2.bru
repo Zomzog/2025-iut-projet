@@ -1,0 +1,41 @@
+meta {
+  name: Create 2
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8082/api/v1/reservations
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "owner": {{user1}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 42,
+    "start": 11,
+    "end": 12,
+    "day": "2026-11-02"
+  }
+  
+}
+
+vars:post-response {
+  resa2: res.body.id
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: length 36
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+headers {
+  X-User: pony
+}

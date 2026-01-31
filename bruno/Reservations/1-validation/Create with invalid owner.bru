@@ -1,0 +1,39 @@
+meta {
+  name: Create with invalid owner
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8082/api/v1/reservations
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user2}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 42,
+    "start": 11,
+    "end": 12,
+    "day": "2026-12-01"
+  }
+  
+}
+
+assert {
+  res.status: eq 400
+  res.body.status: eq 400
+  res.body.message: contains owner
+  res.body.timestamp: contains 2026
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

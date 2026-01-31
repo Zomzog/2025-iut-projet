@@ -1,0 +1,37 @@
+meta {
+  name: Create with uuid
+  type: http
+  seq: 15
+}
+
+post {
+  url: http://localhost:8082/api/v1/reservations
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "id": "a6efa614-0235-4180-bbe7-0ff30f3bb858",
+    "owner": {{user3}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 42,
+    "start": 9,
+    "end": 10,
+    "day": "2026-12-01"
+  }
+  
+}
+
+assert {
+  res.body.id: neq a6efa614-0235-4180-bbe7-0ff30f3bb858
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

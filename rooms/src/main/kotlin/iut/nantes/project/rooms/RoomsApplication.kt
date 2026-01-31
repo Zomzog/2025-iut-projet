@@ -17,13 +17,14 @@ fun main(args: Array<String>) {
 @RequestMapping("/api/v1")
 class RoomController {
 
-    val rooms: MutableMap<Long, Room> = mutableMapOf(
+    val defaultRooms = mutableMapOf(
         1L to Room(1, "Salle A", 10, 8, 18),
         2L to Room(2, "Salle B", 20, 9, 17),
         3L to Room(3, "Salle C", null, 1, 8),
         42L to Room(42, "La salle 42", 1, 7, 20),
         45L to Room(45, "What time?", 1, -7, 28),
     )
+    val rooms: MutableMap<Long, Room> = defaultRooms
 
     @GetMapping("rooms")
     fun listAll(): List<Room> {
@@ -32,14 +33,16 @@ class RoomController {
 
     @GetMapping("rooms/{id}")
     fun getById(@PathVariable id: Long): ResponseEntity<*> {
-        return if (666L == id) {
-            ResponseEntity.internalServerError().body("BAD REQUEST FROM ROOM SERVICE!!!")
-        } else {
-            val room = rooms[id]
-            if (room != null) {
-                ResponseEntity.ok(room)
-            } else {
-                ResponseEntity.notFound().build()
+        return when (id) {
+            666L -> ResponseEntity.internalServerError().body("BAD REQUEST FROM ROOM SERVICE!!!")
+            777L -> ResponseEntity.status(400).body("Invalid room ID provided.")
+            else -> {
+                val room = rooms[id]
+                if (room != null) {
+                    ResponseEntity.ok(room)
+                } else {
+                    ResponseEntity.notFound().build()
+                }
             }
         }
     }
@@ -71,6 +74,12 @@ class RoomController {
         } else {
             ResponseEntity.notFound().build()
         }
+    }
+
+    @PostMapping("rooms/reset")
+    fun reset(): ResponseEntity<Void> {
+        rooms += defaultRooms
+        return ResponseEntity.noContent().build()
     }
 }
 

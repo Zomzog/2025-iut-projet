@@ -1,0 +1,38 @@
+meta {
+  name: Delete u11
+  type: http
+  seq: 4
+}
+
+delete {
+  url: http://localhost:8081/api/v1/peoples/{{user11}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "age": 30,
+    "address": {
+      "street": "123 Main St",
+      "city": "Nantes",
+      "zipCode": "44000",
+      "country": "France"
+    }
+  }
+}
+
+assert {
+  res.status: eq 204
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

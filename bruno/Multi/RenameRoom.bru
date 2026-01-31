@@ -1,0 +1,65 @@
+meta {
+  name: RenameRoom
+  type: http
+  seq: 12
+}
+
+patch {
+  url: http://localhost:8083/api/v1/rooms/42
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "name": "pony"
+  }
+  
+}
+
+vars:post-response {
+  resa10: res.body.id
+}
+
+tests {
+  const data = res.getBody();
+  
+  const r1 = bru.getVar("resa1");
+  const r2 = bru.getVar("resa2");
+  const r3 = bru.getVar("resa3");
+  const r4 = bru.getVar("resa4");
+  const r5 = bru.getVar("resa5");
+  const r10 = bru.getVar("resa10");
+  const r11 = bru.getVar("resa11");
+  const u1 = bru.getVar("user1");
+  const u2 = bru.getVar("user2");
+  const u3 = bru.getVar("user3");
+  const u4 = bru.getVar("user4");
+  const u5 = bru.getVar("user5");
+  const u10 = bru.getVar("user10");
+  const u11 = bru.getVar("user11");
+  
+  const expectedObject = {
+    "id": r11,
+    "owner": u1,
+    "peoples": [u1],
+    "roomId": 42,
+    "start": 8,
+    "end": 9,
+    "day": "2026-08-01"
+  };
+  
+  const expectedIds = [u4, u3];
+  test("Response IDs should be [ok]", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

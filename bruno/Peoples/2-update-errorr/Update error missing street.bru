@@ -1,0 +1,37 @@
+meta {
+  name: Update error missing street
+  type: http
+  seq: 36
+}
+
+put {
+  url: http://localhost:8081/api/v1/peoples/{{user4}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "age": 30,
+    "address": {
+      "city": "Nantes",
+      "zipCode": "44000",
+      "country": "France"
+    }
+  }
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

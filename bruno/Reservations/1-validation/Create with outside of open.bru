@@ -1,0 +1,36 @@
+meta {
+  name: Create with outside of open
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8082/api/v1/reservations
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user3}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 42,
+    "start": 2,
+    "end": 3,
+    "day": "2026-12-09"
+  }
+  
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

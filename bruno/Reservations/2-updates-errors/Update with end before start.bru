@@ -1,0 +1,36 @@
+meta {
+  name: Update with end before start
+  type: http
+  seq: 9
+}
+
+put {
+  url: http://localhost:8082/api/v1/reservations/{{resa6}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User: pony
+}
+
+body:json {
+  {
+    "owner": {{user3}},
+    "peoples": [{{user1}}, {{user3}}],
+    "roomId": 42,
+    "start": 10,
+    "end": 9,
+    "day": "2026-12-08"
+  }
+  
+}
+
+assert {
+  res.status: eq 400
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
